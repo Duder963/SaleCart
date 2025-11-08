@@ -1,0 +1,68 @@
+
+const KEY = "f28350ee81a898d49386df1eb3d90b692d8f43c0"
+
+const cart: {id: string, title: string, price: number, lowest: boolean}[] = []
+
+function showCart(): void {
+    if (!cart.length) return
+    for (const item in cart) {
+        console.log(item)
+        const note = item.lowest ? " LOWEST!" : ""
+        console.log(`${item.title}: ${item.price}${note}`)
+    }
+}
+
+async function getGame(name: string): Promise<[string,string]> {
+    const url = "https://api.isthereanydeal.com/games/search/v1"
+    const params = new URLSearchParams({
+        key: KEY,
+        title: name,
+        results: "1"
+    })
+
+    const data = await fetch(`${url}?${params.toString()}`).then(res => res.json())
+    console.log(data)
+    return [data[0].title, data[0].id]
+
+}
+
+async function getPrice(id: string): Promise<[number, boolean]> {
+    const url = "https://api.isthereanydeal.com/games/overview/v2"
+
+    const params = new URLSearchParams({
+        key: KEY,
+    })
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([id])
+    }
+    const data = await fetch(`${url}?${params.toString()}`, options).then(res => res.json())
+    const price = data.prices[0].current.price.amount
+    const lowest = price == data.prices[0].lowest.price.amount
+    return [price, lowest]
+}
+
+async function addToCart(name: string): Promise<any> {
+    const [title, id] = await getGame(name)
+    const [price, lowest] = await getPrice(id)
+    cart.push({
+        id: id,
+        title: title,
+        price: price,
+        lowest: lowest
+    })
+}
+
+export default async function Home() {
+    await addToCart("Halo")
+    await addToCart("Deltarune")
+    await addToCart("Clair Obscur")
+    return (
+        <>
+        </>
+    );
+}
