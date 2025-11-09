@@ -1,37 +1,42 @@
 'use client'
 import useLocalStorageState from "use-local-storage-state"
+import { useState } from "react"
 import SearchResult from "./search_result"
 import { GameData } from "./game_data"
+import Image from "next/image"
+import cartImage from "@/public/cart.svg"
 
-export function CartPage({toggleAction}: {toggleAction: () => void}) {
+export default function Cart() {
     const [localCart, setLocalCart] = useLocalStorageState<GameData[]>('cart', {
         defaultValue: []
     })
+    const [showCart, setShowCart] = useState(false)
 
     const entries = localCart.map((entry) => <SearchResult key={entry.id} data={entry}/>)
     const sum = localCart.reduce((acc, curr) => acc + (curr.price ?? 0), 0)
 
-    console.log(localCart.length)
-    if (localCart.length == 0) {
-        return (
-            <div className="p-8">
-                <button className="text-4xl font-bold cursor-pointer" onClick={() => toggleAction()}>{">"}</button>
-                <p className="flex flex-1 h-full text-6xl m-auto items-center justify-center">Cart is empty</p>
+    const CloseButton = <button className="text-4xl font-black cursor-pointer bg-slate-600 rounded-full p-4" onClick={() => setShowCart(false)}>{"＞"}</button>
+    const CartToast = (
+        <button className="flex justify-end text-2xl font-bold cursor-pointer fixed right-4 bottom-4 bg-slate-600 rounded-full p-4" onClick={() => setShowCart(true)}>
+            <Image src={cartImage} alt="a shopping cart" width={48} height={48}/>
+            <p className="text-center my-auto">({localCart?.length})</p>
+        </button>
+    )
+    const Cart = (
+        <div className="flex flex-col mx-auto gap-4 p-8 fixed bg-slate-900 w-full md:w-4/5 right-0 h-full rounded-l-xl">
+            <div className="flex align-middle justify-between">
+                {CloseButton}
+                <p className="flex text-2xl font-bold items-center text-center">{`${localCart.length} items`}</p>
+                <button className="text-2xl font-bold cursor-pointer" onClick={() => setLocalCart([])}>Empty Cart</button>
             </div>
-        )
-    }
+            <div className="mx-auto flex flex-col gap-4">
+                {entries}
+                {sum > 0 && <p className="flex flex-1 justify-end text-4xl font-bold">Total: ${sum}</p>}
+            </div>
+        </div>
+    )
 
     return (
-        <div className="flex flex-col mx-auto gap-4 p-8">
-            <div className="flex justify-between">
-            <button className="text-4xl font-black cursor-pointer bg-slate-600 rounded-full p-4" onClick={() => toggleAction()}>{"＞"}</button>
-                <p className="text-4xl font-bold">{`${localCart.length} items`}</p>
-                <button className="text-4xl font-bold cursor-pointer" onClick={() => setLocalCart([])}>Empty Cart</button>
-            </div>
-            <div className="m-auto flex flex-col gap-4">
-                {entries}
-            </div>
-            <p className="flex flex-1 justify-end text-4xl font-bold">Total: ${sum}</p>
-        </div>
+        showCart ? Cart : CartToast
     )
 }
