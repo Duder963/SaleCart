@@ -21,7 +21,7 @@ export default function GameSearch() {
         const data = await fetch(`${api}/${encodeURIComponent(search)}`)
 
         .then(res => res.json())
-        .catch((err) => console.error(err))
+        .catch((err) => {console.error(err); return []})
 
         setSearchEntries(data)
     }
@@ -30,7 +30,7 @@ export default function GameSearch() {
     return (
         <div className="flex flex-col mx-auto gap-4 p-4 w-9/10 sm:w-5/6 md:w-2/3 xl:w-1/2">
             <input 
-                className="border-2 border-slate-600 text-center text-white h-10 rounded-full"
+                className="border-2 border-slate-600 text-center text-white text-xl h-10 rounded-full"
                 placeholder="Search Games..."
                 onKeyDown={HandleSearchKeyDown}
             />

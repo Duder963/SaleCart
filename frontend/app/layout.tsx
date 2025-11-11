@@ -24,7 +24,7 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <div className="sticky top-0 flex gap-2 py-4 px-40 pd-8 bg-slate-800 place-content-between w-screen mx-auto">
+                <div className="sticky top-0 flex gap-2 p-4 bg-slate-800 place-content-between items-center w-screen">
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl text-center text-green-500 font-bold">
                         {/* next/link doesn't reload page on click */}
                         <Link href="/">SaleCart</Link>
