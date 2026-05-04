@@ -19,7 +19,6 @@ export default function GameSearch() {
         if (!search) return
         
         const data = await fetch(`${api}/${encodeURIComponent(search)}`)
-
         .then(res => res.json())
         .catch((err) => {console.error(err); return []})
 
