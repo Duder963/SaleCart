@@ -19,7 +19,15 @@ export default function Cart() {
 
     const CartToast = (
         <button className="flex justify-end text-2xl font-bold cursor-pointer fixed right-4 bottom-4 bg-slate-600 rounded-full p-4" onClick={() => setShowCart(true)}>
-            <Image src={cartImage} alt="a shopping cart" width={48} height={48}/>
+            <Image
+                src={cartImage}
+                alt="a shopping cart"
+                width={48}
+                height={48}
+                style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                }} />
             <p className="text-center my-auto">({localCart?.length})</p>
         </button>
     )

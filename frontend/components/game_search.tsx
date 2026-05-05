@@ -3,13 +3,21 @@
  * Handles searching though and displaying the glossary
  */
 'use client'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { GameData } from "./game_data"
 import SearchResult from "./search_result"
 
 export default function GameSearch() {
     const [searchEntries, setSearchEntries] = useState<GameData[]>([])
+    const [backendLive, setBackendLive] = useState<boolean | null>(null)
     const api = "http://localhost:4963/api"
+
+    useEffect(() => {
+        fetch(api)
+            .then(res => res.json())
+            .then(data => setBackendLive(data?.success === true))
+            .catch(() => setBackendLive(false))
+    }, [])
 
     async function HandleSearchKeyDown(event: any) {
         //If input not enter, return
@@ -26,9 +34,18 @@ export default function GameSearch() {
     }
 
     const entries = searchEntries.map((entry) => <SearchResult key={entry.id} data={entry}/>)
+
+    if (backendLive === false) {
+        return (
+            <div className="flex flex-col mx-auto gap-4 p-4 w-9/10 sm:w-5/6 md:w-2/3 xl:w-1/2">
+                <p className="text-center text-red-400 text-xl font-bold">Could not connect to the backend. Make sure the server is running.</p>
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-col mx-auto gap-4 p-4 w-9/10 sm:w-5/6 md:w-2/3 xl:w-1/2">
-            <input 
+            <input
                 className="border-2 border-slate-600 text-center text-white text-xl h-10 rounded-full"
                 placeholder="Search Games..."
                 onKeyDown={HandleSearchKeyDown}

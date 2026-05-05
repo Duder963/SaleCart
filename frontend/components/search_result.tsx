@@ -3,7 +3,7 @@
  * Displays the data of a term from the glossary
  * Also handles processing the data into a more usable format
  */
-import Image from 'next/image'
+import Image from "next/image"
 import { GameData } from './game_data'
 import useLocalStorageState from "use-local-storage-state"
 import Link from 'next/link'
@@ -35,7 +35,16 @@ export default function SearchResult({data}: {data: GameData}) {
                     className='flex flex-1 flex-col lg:flex-row bg-slate-700 hover:bg-slate-600 h-full content-stretch items-center'
                     href={itad_url ?? ""} 
                 >
-                    <Image src={banner_url ?? missingImage} width={300} height={140} objectFit='cover' alt='A banner image of a video game'/>
+                    <Image
+                        src={banner_url ?? missingImage}
+                        width={300}
+                        height={140}
+                        alt='A banner image of a video game'
+                        style={{
+                            maxWidth: "100%",
+                            height: "auto",
+                            objectFit: "cover"
+                        }} />
                     <h3 className="flex-1 text-3xl m-4 font-bold text-center">{title}</h3>
                 </Link>
                 <Link href={store_url ?? ""} className='flex p-4 flex-col bg-slate-800 hover:bg-slate-700 md:w-30 justify-center text-center'>
@@ -48,6 +57,6 @@ export default function SearchResult({data}: {data: GameData}) {
                 : <button className={`${button_class} bg-green-700 hover:bg-green-600`} onClick={() => addToCart(data)}>+</button>
             }
         </div>
-    )
+    );
 
 }

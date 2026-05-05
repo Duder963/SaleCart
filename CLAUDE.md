@@ -2,59 +2,45 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Development Commands
-
-**Backend** (root directory):
-```bash
-npm run dev        # nodemon backend/server.js — hot-reload on port 4963
-```
-
-**Frontend** (`frontend/` directory):
-```bash
-npm run dev        # next dev — port 3000
-npm run build      # next build
-npm run lint       # eslint
-```
-
-Both servers must run simultaneously during development. The frontend calls the backend at `/api/*`.
-
 ## Architecture
 
-SaleCart is a full-stack game price comparison app. Backend is Express 5 (ES modules), frontend is Next.js 16 with React 19, TypeScript, and Tailwind CSS 4.
+SaleCart is a game price tracker built on two separate services:
 
-**Backend entry points:**
-- `backend/server.js` — Express app, listens on `PORT` (default 4963), mounts router at `/api`
-- `backend/router.js` — All API logic: `GET /api/` (health check) and `GET /api/:game` (price lookup)
-- `backend/api.js` — Currently empty/unused
+- **Backend** (`/backend`): Express.js API server (Node.js, port 4963) that proxies requests to the [IsThereAnyDeal API](https://isthereanydeal.com/). Requires a `KEY` env var for the ITAD API key.
+- **Frontend** (`/frontend`): Next.js 16 / React 19 app (port 3000) with Tailwind CSS v4. Talks to the backend at `http://localhost:4963/api`.
 
-**Frontend structure:**
-- `frontend/app/page.tsx` — Root page; renders `<GameSearch>` and cart sidebar
-- `frontend/app/layout.tsx` — Client component (`'use client'`); nav header with branding
-- `frontend/components/game_search.tsx` — Search input; fires on Enter, calls backend
-- `frontend/components/search_result.tsx` — Per-game card: price, store, add-to-cart button
-- `frontend/components/game_data.tsx` — Shared TypeScript interface for game data shape
+The two services are run independently — there is no monorepo orchestration.
 
-## Data Flow
+## Data flow
 
-1. User types a game title and presses Enter in `GameSearch`
-2. Frontend fetches `GET /api/:game` (URL-encoded game title)
-3. Backend calls IsThereAnyDeal API twice: once to search by title (get IDs), once to get pricing overview
-4. Backend returns an array of game objects with store name, prices, and store URLs
-5. Results render as `SearchResult` cards; cart state persists in localStorage via `use-local-storage-state`
+1. User types a game name and presses Enter → `GameSearch` fires `fetch` to `/api/:game`
+2. Backend calls ITAD search API, then ITAD overview API to attach current prices, and returns a `GameData[]` array
+3. `SearchResult` renders each result; add/remove writes to `localStorage` via `use-local-storage-state`
+4. `Cart` reads the same `localStorage` key (`'cart'`) and displays the running total
+
+`GameData` (defined in `frontend/components/game_data.tsx`) is the single shared shape passed between all frontend components and returned by the backend.
+
+## Dev commands
+
+Run both services in separate terminals:
+
+```bash
+# Backend (from repo root)
+pnpm dev          # nodemon backend/server.js — restarts on change
+
+# Frontend (from /frontend)
+pnpm dev          # next dev — http://localhost:3000
+pnpm build        # production build
+pnpm lint         # eslint
+```
 
 ## Environment
 
-`.env` at repo root (not gitignored despite being in `.gitignore` — it is tracked):
+The backend reads `.env` at the repo root:
+
 ```
 PORT=4963
-KEY="<IsThereAnyDeal API key>"
+KEY=<isthereanydeal api key>
 ```
 
-The `KEY` variable is the IsThereAnyDeal API key used in `router.js`.
-
-## Quirks
-
-- Package manager is **pnpm** at root; frontend has both `pnpm-lock.yaml` and `package-lock.json` — prefer pnpm
-- `frontend/app/layout.tsx_` and `page.tsx_` are backup files left in the repo, not active code
-- `next.config.ts` allowlists `cdn.isthereanydeal.com` for Next.js `<Image>` optimization
-- No test suite is configured
+The frontend's `next.config.ts` allowlists `assets.isthereanydeal.com` for `next/image`.
