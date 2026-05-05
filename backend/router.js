@@ -13,7 +13,6 @@ export async function getSearch(req, res) {
     // const {game} = decodeURIComponent(req.params)
     const {game} = req.params
     const search_url = "https://api.isthereanydeal.com/games/search/v1"
-    console.log(game)
     let params = new URLSearchParams({
         key: KEY,
         title: game,

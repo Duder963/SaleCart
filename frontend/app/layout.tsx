@@ -24,15 +24,20 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <div className="sticky top-0 flex gap-2 p-4 bg-slate-800 place-content-between items-center w-screen">
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl text-center text-green-500 font-bold">
-                        {/* next/link doesn't reload page on click */}
-                        <Link href="/">SaleCart</Link>
+                <div className="sticky top-0 z-20 flex gap-2 px-6 py-4 bg-slate-800/95 backdrop-blur-sm border-b border-slate-700/60 shadow-lg shadow-black/40 place-content-between items-center w-screen">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl text-center font-bold">
+                        <Link href="/" className="text-green-400 hover:text-green-300 transition-colors duration-200 drop-shadow-[0_0_12px_rgba(74,222,128,0.35)]">
+                            SaleCart
+                        </Link>
                     </h1>
-                    <div className="flex gap-4 [&_p]:font-bold [&_p]:text-xl">
-                        <Link href={"/credits"}><p>Credits</p></Link>
-                        <Link href={"/contact"}><p>Contact</p></Link>
-                    </div>
+                    <nav className="flex gap-6">
+                        <Link href={"/credits"} className="text-slate-300 hover:text-white font-semibold text-lg transition-colors duration-200 border-b-2 border-transparent hover:border-green-400 pb-0.5">
+                            Credits
+                        </Link>
+                        <Link href={"/contact"} className="text-slate-300 hover:text-white font-semibold text-lg transition-colors duration-200 border-b-2 border-transparent hover:border-green-400 pb-0.5">
+                            Contact
+                        </Link>
+                    </nav>
                 </div>
                 {children}
             </body>
