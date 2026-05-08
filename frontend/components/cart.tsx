@@ -6,7 +6,7 @@ import { GameData } from "./game_data"
 import Image from "next/image"
 import cartImage from "@/public/cart.svg"
 
-function CartItem({ entry, emptying, delay }: { entry: GameData, emptying: boolean, delay: number }) {
+export function CartItem({ entry, emptying, delay }: { entry: GameData, emptying: boolean, delay: number }) {
     const [collapsing, setCollapsing] = useState(false)
     const isCollapsing = collapsing || emptying
     return (

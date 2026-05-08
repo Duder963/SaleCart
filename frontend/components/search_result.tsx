@@ -7,7 +7,6 @@ import Image from "next/image"
 import { GameData } from './game_data'
 import useLocalStorageState from "use-local-storage-state"
 import { useState } from "react"
-import Link from 'next/link'
 import missingImage from "@/public/missing.png"
 
 export default function SearchResult({data, flashRemove = false, onRemoveStart}: {data: GameData, flashRemove?: boolean, onRemoveStart?: () => void}) {
@@ -52,9 +51,11 @@ export default function SearchResult({data, flashRemove = false, onRemoveStart}:
     return (
         <div className={`flex content-stretch h-full rounded-xl overflow-clip shadow-md ${animClass}`} onAnimationEnd={handleAnimationEnd}>
             <div className='flex flex-1 flex-col sm:flex-row'>
-                <Link
+                <a
                     className='flex flex-1 flex-col lg:flex-row bg-slate-700 hover:bg-slate-600 h-full content-stretch items-center transition-colors duration-150'
                     href={itad_url ?? ""}
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <Image
                         src={banner_url ?? missingImage}
@@ -67,11 +68,16 @@ export default function SearchResult({data, flashRemove = false, onRemoveStart}:
                             objectFit: "cover"
                         }} />
                     <h3 className="flex-1 text-3xl m-4 font-bold text-center">{title}</h3>
-                </Link>
-                <Link href={store_url ?? ""} className='flex p-4 flex-col bg-slate-800 hover:bg-slate-700 md:w-30 justify-center text-center transition-colors duration-150'>
+                </a>
+                <a
+                    href={store_url ?? ""}
+                    className='flex p-4 flex-col bg-slate-800 hover:bg-slate-700 md:w-30 justify-center text-center transition-colors duration-150'
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     {price != null && <p className={"text-3xl font-bold" + (is_lowest ? " text-green-400" : "")}>{price > 0 ? `$${price}` : "Free"}</p>}
                     {store && <p className="text-lg font-semibold text-slate-300">{store}</p>}
-                </Link>
+                </a>
             </div>
             {inCart
                 ? <button disabled={removing} className={`${button_class} bg-slate-600 hover:bg-slate-500 text-white`} onClick={handleRemoveFromCart}>✕</button>
